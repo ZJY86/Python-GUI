@@ -1,2 +1,3 @@
 # Python-GUI
-pythonGUI学习代码
+# 以tkinter包为主
+# 包括tkinter的组件，布局与事件
