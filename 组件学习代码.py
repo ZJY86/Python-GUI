@@ -192,16 +192,29 @@ def test8():     # scale组件 与滚动条类似，用滚动来表示某个范�
     root.mainloop()
 
 def test9():    # Text组件 Text用于显示和处理多行文本,Text非常灵活和强大,可以用来当作简单的文本编辑器和网页浏览器
+    def show(): #    点击显示穹妹图片
+        text.image_create(tk.END,image=photo)
+        print("添加完成")
+
     root = tk.Tk()
 
-    text = tk.Text(root, width=30, height=2)
+    text = tk.Text(root, width=300, height=100)
     text.pack()
 
+    #   insert方法可以用于给text组件添加文本
     #   INSERT表示插入到光标位置,END表示插入到最后
-    text.insert(tk.INSERT, "I am ZJY\n")
-    text.insert(tk.END, ",your father!")
+    text.insert(tk.INSERT, "I am ZJY")
 
+    #   还可以在text组件中插入image和window组件，此处演示在text中用按钮显示出图片
+    photo = tk.PhotoImage(file='img.png')
+    text.window_create(tk.INSERT,window=tk.Button(text,text='点我试试',command=show))
     root.mainloop()
 
-if __name__ == '__main__':
-    test9()
+
+"""
+
+Text组件中的三种用法
+包括Indexes,Mark,Tag
+因内容较多,另写在Text.py中
+
+"""
