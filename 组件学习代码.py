@@ -1,3 +1,7 @@
+# @author   :牛子小小说话吊吊
+# @time     :2021.10.6
+# 本源文件主要记录tkinter基本组件的用法
+
 import tkinter as tk
 
 #   可以把GUI用类封装
@@ -32,7 +36,7 @@ def test1(): # Label
     textlabel1.pack(side=tk.LEFT)
 
 
-    photo = tk.PhotoImage(file='img.png')
+    photo = tk.PhotoImage(file='../PyGame/img.png')
     imglabel = tk.Label(frame1,image=photo)
     imglabel.pack(side=tk.LEFT)
 
@@ -206,15 +210,303 @@ def test9():    # Text组件 Text用于显示和处理多行文本,Text非常灵
     text.insert(tk.INSERT, "I am ZJY")
 
     #   还可以在text组件中插入image和window组件，此处演示在text中用按钮显示出图片
-    photo = tk.PhotoImage(file='img.png')
+    photo = tk.PhotoImage(file='../PyGame/img.png')
     text.window_create(tk.INSERT,window=tk.Button(text,text='点我试试',command=show))
     root.mainloop()
+    """
+
+        Text组件中的三种用法
+        包括Indexes,Mark,Tag  
+        因内容较多,另写在Text.py中
+
+    """
+
+class Canvas:
+    @staticmethod
+    def t1():# canvas初体验
+        root = tk.Tk()
+
+        canvas = tk.Canvas(root, width=200, height= 100)
+        canvas.pack()
+
+        # 可以在canvas对象中画线 画矩阵 插入文本 椭圆/圆
+        l1 = canvas.create_line(0, 50, 200, 50, fill="yellow")
+        l2 = canvas.create_line(100, 0, 100, 100, fill="blue")
+        r1 = canvas.create_rectangle(50, 25, 150, 75, fill="yellow")
+        o1 = canvas.create_oval(40, 20, 120, 100, fill="pink")
+        t1 = canvas.create_text(100, 50, text='zjy is your father', fill="black")
+
+        #   可以用某些方法修改Canvas中的对象
+        canvas.coords(l1, 0, 25, 200, 25)
+        canvas.itemconfig(r1, fill="red")
+        canvas.delete(l2)
+
+        root.mainloop()
+
+    @staticmethod
+    def t2(): # canvas绘制多边形
+        root = tk.Tk()
+
+        root.mainloop()
+
+    @staticmethod
+    def t3(): # 利用canvas写一个简单的画图程序
+        def piant(event):
+            d = 0.001
+            x1, y1 = (event.x - d), (event.y - d)
+            x2, y2 = (event.x + d), (event.y + d)
+            canvas.create_oval(x1, y1, x2, y2, fill="black")
+
+        root = tk.Tk()
+
+        canvas = tk.Canvas(root, width=400, height=200)
+        canvas.pack()
+
+        canvas.bind("<B1-Motion>", piant)
+
+        tk.Button(root, text='清空全部', command=(lambda x=tk.ALL: canvas.delete(x))).pack()
+
+        root.mainloop()
+
+class Menu:
+    '''
+        菜单功能，不建议用按钮或其他组件实现菜单功能
+        tk.Menu()可以创建一个顶级菜单，然后往顶级菜单里添加组件
+    '''
+    @staticmethod
+    def t1(): # 简单的菜单实现
+        def callback():
+            print('已调用')
+
+        root = tk.Tk()
+
+        menubar = tk.Menu(root)
+        menubar.add_command(label='Hello', command=callback)
+        menubar.add_command(label='Quit', command=root.quit)
+
+        # 再root中配置菜单
+        root.config(menu=menubar)
+
+        root.mainloop()
+
+    @staticmethod
+    def t2(): # 下拉菜单的实现
+        def callback():
+            print('被调用了')
+
+        root = tk.Tk()
+
+        menubar = tk.Menu(root)     # 顶层菜单
+        filemenu = tk.Menu(menubar, tearoff=False)  # 下拉菜单
+
+        lst1 = ['打开', '保存', '退出']
+        for i in lst1:
+            filemenu.add_command(label=i, command=callback)
+            filemenu.add_separator()
+
+        #   用add_cascade方法把下拉菜单和顶层菜单进行绑定
+        menubar.add_cascade(label='文件', menu=filemenu)
 
 
-"""
+        root.config(menu=menubar)
+        root.mainloop()
 
-Text组件中的三种用法
-包括Indexes,Mark,Tag
-因内容较多,另写在Text.py中
+    @staticmethod
+    def t3():   # 弹出菜单
+        def callback():
+            print("已调用")
 
-"""
+        root = tk.Tk()
+        frame = tk.Frame(root, width=512, height=512)
+        frame.pack()
+
+        menu = tk.Menu(frame, tearoff=False)
+        menu.add_command(label='好家伙', command=callback)
+        menu.add_command(label='GG', command=callback)
+
+
+        def popup(event):    # 弹出菜单
+            menu.post(event.x, event.y)
+
+        frame.bind("<Button-3>", popup)
+
+        root.mainloop()
+
+    # 菜单还能增加单选或者多选按钮
+    @staticmethod
+    def t4():
+        def callback():
+            print('于menu.t4()中被调用了')
+
+        root = tk.Tk()
+
+        # 顶级菜单
+        menubar = tk.Menu(root)
+
+        # checkbutton关联变量
+        v1 = tk.IntVar()
+        v2 = tk.IntVar()
+        v3 = tk.IntVar()
+
+        # 下拉菜单
+        filemenu = tk.Menu(menubar,tearoff=True)            # 把单选按钮和IntVar绑定 被选了就是1 没选就是0
+        filemenu.add_checkbutton(label='菜单单选1', command=callback, variable=v1)
+        filemenu.add_checkbutton(label='菜单单选2', command=callback, variable=v2)
+        filemenu.add_separator()
+        filemenu.add_checkbutton(label='菜单单选3', command=callback, variable=v3)
+
+        # 把下拉菜单加到顶级菜单中
+        menubar.add_cascade(label='下拉菜单', menu=filemenu)
+
+        # 复选按钮关联变量
+        v = tk.IntVar()
+        v.set(1)
+        editmenu = tk.Menu(menubar, tearoff=True)
+        # 添加复选按钮                                             # value表示复选被选中后绑定Var变量的值
+        editmenu.add_radiobutton(label='菜单复选1', command=callback, variable=v, value=1)
+        editmenu.add_radiobutton(label='菜单复选2', command=callback, variable=v, value=2)
+        editmenu.add_separator()
+        editmenu.add_radiobutton(label='菜单复选3', command=callback, variable=v, value=3)
+
+        # 把菜单添加到顶级菜单中
+        menubar.add_cascade(label='复选按钮', menu=editmenu)
+
+        # 配置菜单
+        root.config(menu=menubar)
+        root.mainloop()
+
+
+class Menubutton:
+    # 菜单按钮
+    # 可以出现在窗口任意位置的弹出下拉菜单
+
+    @staticmethod
+    def t1():
+        def callback():
+            print('被调用了')
+
+        root = tk.Tk()
+
+        menubutton = tk.Menubutton(root, text='这是个MenuButton', relief=tk.RAISED)
+        menubutton.pack()
+
+        # 下拉菜单和Menubutton绑定
+        filemenu = tk.Menu(menubutton, tearoff=True)
+        filemenu.add_command(label='按钮1', command=callback)
+        filemenu.add_separator()
+        filemenu.add_checkbutton(label='单选1', command=callback, selectcolor='yellow')
+        filemenu.add_separator()
+        filemenu.add_command(label='退出按钮', command=root.quit)
+        # 配置菜单
+
+        menubutton.config(menu=filemenu)
+
+        root.mainloop()
+
+class OptionMenu:
+    # 选项菜单,可以把listbox加入其中
+    # 只需要一个StringVar变量就可以记录用户的选择
+    @staticmethod
+    def t1():
+        def callback():
+            print("选项菜单的当前值为{}".format(strvar.get()))
+
+        options=['zsj', 'zjy', 'tjj', 'haohao', 'rcx', 'ljj', 'weber']
+
+        root = tk.Tk()
+
+        strvar = tk.StringVar()
+        # 选项菜单显示的初始值
+        strvar.set(options[0])
+
+        # 直接按位置传入参数
+        tk.OptionMenu(root, strvar, *options).pack()
+
+        # 按钮绑定函数，输出当前值
+        tk.Button(root, text='获取选项菜单当前值', command=callback).pack()
+
+        root.mainloop()
+
+
+class Message:
+    # label的变体，可以显示多行文本消息
+    # 可以自动换行，并调整文本的尺寸使其适应给定的尺寸
+    @staticmethod
+    def t1():
+        root = tk.Tk()
+
+        tk.Message(root, text='嘉然，我真的好喜欢你呀，为了你我要电牛子！！！！！！！！！！', width=75).pack()
+
+        root.mainloop()
+
+class Spinbox():
+
+    # Spinbox是Entry组件的变体，用法相似，用于从固定的值中选一个输入
+    # Spinbox可以通过元组或者范围来指定用户输入的内容
+    @staticmethod
+    def t1():
+        root = tk.Tk()
+
+        # 通过范围指定内容
+        # spinbox= tk.Spinbox(root, from_=0, to=10)
+
+        # 通过元组指定范围
+        values = ('a', 'b', 'c', 'd', 'e')
+        tk.Spinbox(root, values=values).pack()
+
+        root.mainloop()
+
+class PanedWindow():
+
+    # 是一个空间管理组件，为组件提供一个框架，允许让用户调整应用程序的空间划分
+
+    # 创建一个三窗格的PanedWindow(嵌套PanerWindow结构)
+    @staticmethod
+    def t1():
+        # showhandle显示一个移动手柄，sashrelief显示划分线
+        pw1 = tk.PanedWindow(showhandle = True, sashrelief = tk.SUNKEN)
+        pw1.pack(fill=tk.BOTH, expand=1)
+
+        left = tk.Label(pw1, text='左')
+        pw1.add(left)
+
+        # 嵌套
+        pw2 = tk.PanedWindow(orient=tk.VERTICAL,showhandle = True)
+        top = tk.Label(pw2, text='顶')
+        pw2.add(top)
+
+        bottom = tk.Label(pw2, text='底')
+        pw2.add(bottom)
+
+        pw1.add(pw2)
+        tk.mainloop()
+
+
+class Toplevel():
+    # Toplevel类似于Frame，但是其是一个独立的顶级窗口，通常有标题栏、边框等
+    # 通常用于显示额外的窗口、对话框和其他弹出窗口中
+
+    # 单击按钮创建新窗口
+    @staticmethod
+    def t1():
+        def create():
+            toplevel = tk.Toplevel()
+            toplevel.title('新弹出chuangkou')
+
+            tk.Message(toplevel, text='还要多远才能进入你的心').pack()
+
+        root = tk.Tk()
+
+        tk.Button(root, text='单击创建新窗口', command=create).pack()
+
+        root.mainloop()
+
+    # tkinter提供一系列方法与窗口管理器进行交互
+    # attributes()方法可以设置或获取窗口属性
+
+#################
+# tkinter组件基础部分到此结束，事件绑定部分在PythonEvent.py之中
+################
+
+if __name__ == '__main__':
+    Toplevel.t1()
